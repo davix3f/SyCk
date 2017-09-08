@@ -2,12 +2,6 @@
 #v:0.1b
 
 
-""".
- -1- any(re.match(operator, "++") for operator in operators) -- implement in For.final_condition
-
-"""
-
-
 class For:
 	init_pattern = r"^for\("  #starting for 'for' cycle
 
