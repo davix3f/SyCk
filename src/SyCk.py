@@ -1,11 +1,25 @@
+# original lib modules
 import re
 
-from cpp import *
+# custom written modules
+from syckIO import *
+from cpp import * #for using it on cpp
 
-test = """do {
-	code
-	code }
-while(a)"""
+print("Available classes from cpp are:", lang_classes)
+
+readline("range",(1,8))
+
+test = Output.test
+
+for line in test:
+	for item in lang_classes:
+		if re.match(item.init_pattern, test):
+			print("It matches", item, "init_pattern")
+			re.match(item.init_pattern, test)
+			exit()
+		else:
+			print("It doesn't match", item, "init_pattern")
+			pass
 
 
 def check(type):
@@ -24,19 +38,19 @@ def check(type):
 
 	def middler():
 
-		"""It's not important what you find in the end, but along the walk"""
+		"""It's not important what you find at the end, but what you find along the journey"""
 
 		if type == DoWhile:
-			return(True)  #since doWhile doesn't have any mid-code, afaik
+			return(True)  	#since doWhile doesn't have any mid-code, afaik
 
 		
 		if type is For:
 
 			valid=0 # if it reaches 3, [init,cond,increment] are all valid
 
-			for item in type.mid_pattern:
-				if re.search(type.mid_pattern[item], test):
-					print(item, 0)
+			for item in type.mid_pattern:						# checking if init,cond and increment are
+				if re.search(type.mid_pattern[item], test):		# all valid, by selecting every element of dict 'mid_pattern'
+					print(item, 0)								# of For in cpp.py
 					valid+=1
 				else:
 					print(item, 1)
@@ -47,13 +61,11 @@ def check(type):
 				return(False)
 
 		else:
-
-			if re.search(type.mid_pattern, test):
+			if re.search(type.mid_pattern, test):				# checking if mid-part coding of some loop is matchy.
 				return(True)
 			else:
 				print("error in middler")
 				return(False)
-
 
 
 	def final():
@@ -65,6 +77,8 @@ def check(type):
 		else:
 			print("error in final")
 			return(False)
+
+	Output.reset()
 
 
 	if recognizer() and middler() and final():
