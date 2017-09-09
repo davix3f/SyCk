@@ -1,0 +1,8 @@
+switch (memes){
+	case 3:
+		cout << aee;
+		break;
+	case 4:
+		cout << eee;
+		break;
+}
