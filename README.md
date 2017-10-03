@@ -25,7 +25,7 @@ Sorry for any english syntax error, I don't speak english natively :c
   - [x] Function detector
   - [ ] Function exploring
   - [x] Structures finder
-  - [ ] hirerarchy_relevator
+  - [ ] hirerarchy
   - [ ] Notifier
   - [ ] Warner
   - [ ] Errors
