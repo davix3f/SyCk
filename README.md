@@ -17,3 +17,19 @@ If you'd like to collaborate, or suggest some changes, feel free to contact me v
 <br/><br/>
 
 Sorry for any english syntax error, I don't speak english natively :c
+
+- [ ] SyCk
+  - [ ] syckIO
+  - [x] Function class
+  
+  - [x] Function detector
+  - [ ] Function exploring
+  - [x] Structures finder
+  - [ ] hirerarchy_relevator
+  - [ ] Notifier
+  - [ ] Warner
+  - [ ] Errors
+  - [ ] Menu
+  - [ ] GUI
+    - [ ] curses
+    - [ ] GTK3+
