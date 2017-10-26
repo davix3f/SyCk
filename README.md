@@ -10,8 +10,8 @@ The key of this tool will be its flexibility: in fact, the main checker tool (Sy
 use the syntax models and patterns of the py files in _/master/Languages_; so, you could invent your own programming language, write a syntax-guide file, eventually correct some lines in SyCk and it's done!
 
 
+</br>
 ### How can I help?
-====================
 
 My aim is to give this program a GUI (prob in GTK3+, since I develop on Debian and it's a quite easy-to-implement GUI system), and lately to write it in CYthon for even better performances. One day.
 Also, I don't know _all_ the languages in the world (e.g. Java, C#, Swift..), so I count on **your** help to write those syntax files, even more than the SyCk src code.
