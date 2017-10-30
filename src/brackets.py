@@ -1,6 +1,6 @@
 import re
 import cpp
-from linecache import *
+import linecache
 
 class Bracket:
 
@@ -12,7 +12,7 @@ class Bracket:
             self.column = column
             self.all = ("Code: %s\nType: %s\nLine: %s\nColumn: %s\n" %(code,type,line,column))
 
-found={"open":{}, "closed":{}}
+found = { "open":{}, "closed":{} }
 
 length = 0
 
@@ -26,9 +26,9 @@ def BracketFinder(output_log = 0):
     num_close = 0
     while selected_line <= length:
 
-        match_open = re.search(r"{", getline("testfile", selected_line))
+        match_open = re.search(r"{", linecache.getline("testfile", selected_line))
 
-        match_close = re.search(r"}", getline("testfile", selected_line))
+        match_close = re.search(r"}", linecache.getline("testfile", selected_line))
 
         if match_open != None:
             if output_log == 1:
@@ -47,6 +47,6 @@ def BracketFinder(output_log = 0):
             exec("b{0}c=Bracket(\"b{0}c\", \"curly\", {1}, {2}); found[\"closed\"][b{0}c.code]=b{0}c".format(num_close, selected_line, match_close.span()[1]))
             num_close+=1
 
-        clearcache()
+        linecache.clearcache()
         selected_line += 1
     return(num_open, num_close)
