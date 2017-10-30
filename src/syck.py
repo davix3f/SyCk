@@ -53,14 +53,11 @@ def function_detector():
                 def nearest(list=lst):
                     for i, d in enumerate(lst):
                         if lst[i] > item:
-                            #print("Item", i,  "("+str(lst[i])+")", "is littler than", item)
                             print("Item", i,  "("+str(lst[i])+")", "is starting", item)
                             return(lst[i])
-                    #print("Item", i, "("+str(lst[i])+")", "bigger than", item)
 
-                #print("Nearest item to line", item, "is bracket on line", lst[0])
                 nearest()
-                print("Set Function", function_match.group(3), " start at line", lst[0], ": exec(Elements.constructs[\'functions\'][\'main\'].extension=%s)" % nearest() )
+                print("Set Function", function_match.group(3), " start at line", lst[i], ": exec(Elements.constructs[\'functions\'][\'main\'].extension=%s)" % nearest() )
 
             else:
                 print("Function", function_match.group(3), " starting at", item)
