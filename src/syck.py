@@ -22,6 +22,10 @@ class Elements:
 
     function_attributes = ["name", "return_type", "extension", "args", "nested"]
 
+    def getElements(kword):
+        for element in Elements.constructs[kword]:
+            print(element)
+
     parent = []
 
 brackets.BracketFinder()
@@ -33,14 +37,15 @@ def function_detector():
 
         function_match = re.search(cpp.Function["init_pattern"], lines[item])
 
+
         if function_match:
 
-            print("Matching: ", lines[item])
+            #print("Matching: ", lines[item])
 
             Elements.constructs["functions"][function_match.group("f_name")] = \
                 cpp.FunctionClass(name=function_match.group("f_name"),
                         return_type = function_match.group("return_type"),
-                        extension = (item, None))
+                        start = item)
             Elements.parent.append(function_match.group("f_name"))
 
             if re.search(r'\{' , function_match.group(0)) == None:
@@ -52,12 +57,12 @@ def function_detector():
 
                 def nearest(list=lst):
                     for i, d in enumerate(lst):
-                        if lst[i] > item:
-                            print("Item", i,  "("+str(lst[i])+")", "is starting", item)
-                            return(lst[i])
+                        if list[i] > item:
+                            print("Item", i,  "("+str(lst[i])+")", "is starting", function_match.group(3))
+                            return(list[i])
 
-                nearest()
-                print("Set Function", function_match.group(3), " start at line", lst[i], ": exec(Elements.constructs[\'functions\'][\'main\'].extension=%s)" % nearest() )
+                print("Set Function", function_match.group(3), " start at line", lst[i], ": exec(Elements.constructs[\'functions\'][%s].start=%s)\n" %(function_match.group(3), nearest()) )
+
 
             else:
-                print("Function", function_match.group(3), " starting at", item)
+                print("Function", function_match.group(3), " starting at", item, "\n")

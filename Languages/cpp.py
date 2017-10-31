@@ -5,15 +5,21 @@ class FunctionClass:
     def __init__(self,
                         name,
                         return_type,
-                        extension=None,
+                        start,
                         args=None,
+                        end=None,
                         nested={}):
 
         self.name = name
         self.return_type = return_type
-        self.extension = extension
         self.args = args
+        self.start = start
+        self.end = end
         self.nested = nested
+
+    def calculateExtension(start, end):
+        self.extension = (start, end)
+        return(self.extension)
 
 
 class ForClass:
