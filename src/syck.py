@@ -30,17 +30,14 @@ class Elements:
 
 brackets.BracketFinder()
 
+
 def function_detector():
-
-
     for item in lines:
 
         function_match = re.search(cpp.Function["init_pattern"], lines[item])
 
 
         if function_match:
-
-            #print("Matching: ", lines[item])
 
             Elements.constructs["functions"][function_match.group("f_name")] = \
                 cpp.FunctionClass(name=function_match.group("f_name"),
@@ -57,14 +54,11 @@ def function_detector():
 
                 def nearest(list=lst):
                     for i, d in enumerate(lst):
-                        if list[i] > item:
-                            print("Item", i,  "("+str(lst[i])+")", "is starting", function_match.group(3))
-                            return(list[i])
-
-                print("Set Function", function_match.group(3), " start at line", lst[i], "exec(Elements.constructs[\'functions\'][\'%s\'].start=%s" %(function_match.group(3), nearest()))
+                        if d > item:
+                            print("Item", i,  "("+str(d)+")", "is starting", function_match.group(3), "\n")
+                            return(d)
 
                 exec("Elements.constructs[\'functions\'][\'%s\'].start=%s" %(function_match.group(3), nearest()))
 
-
-            else:
-                print("Function", function_match.group(3), " starting at", item, "\n")
+            else:        #if: function_match
+                print("\nFunction", function_match.group(3), " starting at", item, "\n")
