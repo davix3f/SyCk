@@ -5,7 +5,8 @@ class FunctionClass:
     def __init__(self,
                         name,
                         return_type,
-                        start,
+                        dect_at,
+                        start=None,
                         args=None,
                         end=None,
                         nested={}):
@@ -13,6 +14,7 @@ class FunctionClass:
         self.name = name
         self.return_type = return_type
         self.args = args
+        self.dect_at = dect_at
         self.start = start
         self.end = end
         self.nested = nested

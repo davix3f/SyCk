@@ -45,7 +45,7 @@ def function_detector():
             Elements.constructs["functions"][function_match.group("f_name")] = \
                 cpp.FunctionClass(name=function_match.group("f_name"),
                         return_type = function_match.group("return_type"),
-                        start = item)
+                        dect_at = item)
             Elements.parent.append(function_match.group("f_name"))
 
             if re.search(r'\{' , function_match.group(0)) == None:
@@ -61,7 +61,9 @@ def function_detector():
                             print("Item", i,  "("+str(lst[i])+")", "is starting", function_match.group(3))
                             return(list[i])
 
-                print("Set Function", function_match.group(3), " start at line", lst[i], ": exec(Elements.constructs[\'functions\'][%s].start=%s)\n" %(function_match.group(3), nearest()) )
+                print("Set Function", function_match.group(3), " start at line", lst[i], "exec(Elements.constructs[\'functions\'][\'%s\'].start=%s" %(function_match.group(3), nearest()))
+
+                exec("Elements.constructs[\'functions\'][\'%s\'].start=%s" %(function_match.group(3), nearest()))
 
 
             else:
