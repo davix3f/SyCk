@@ -1,5 +1,6 @@
 #lang:CPP
 #v:0.7
+import re
 
 class FunctionClass:
     def __init__(self,
@@ -25,35 +26,81 @@ class FunctionClass:
 
 
 class ForClass:
-    pass
+    def __init__(self,
+                        dect_at,
+                        name,
+                        start=None,
+                        args=None,
+                        end=None,
+                        nested={}):
+        self.name = name
+        self.args = args
+        self.dect_at = dect_at
+        self.start = start
+        self.end = end
+        self.nested = nested
 
 
 
 class WhileClass:
-    pass
-
+    def __init__(self,
+                        dect_at,
+                        name,
+                        start=None,
+                        args=None,
+                        end=None,
+                        nested={}):
+        self.name = name
+        self.args = args
+        self.dect_at = dect_at
+        self.start = start
+        self.end = end
+        self.nested = nested
 
 
 class DoWhileClass:
-    pass
-
+    def __init__(self,
+                        dect_at,
+                        name,
+                        start=None,
+                        args=None,
+                        end=None,
+                        nested={}):
+        self.name = name
+        self.args = args
+        self.dect_at = dect_at
+        self.start = start
+        self.end = end
+        self.nested = nested
 
 class SwitchClass:
-    pass
-
-
+    def __init__(self,
+                        dect_at,
+                        name,
+                        start=None,
+                        args=None,
+                        end=None,
+                        nested={}):
+        self.name = name
+        self.args = args
+        self.dect_at = dect_at
+        self.start = start
+        self.end = end
+        self.nested = nested
 
 #List of all langclasses. Keep it updated.
 
 lang_classes = [ ForClass, WhileClass, DoWhileClass, SwitchClass, FunctionClass ]
 
 
-Function = {"init_pattern": r"(?P<return_type>(int|bool|char|string|void))[\s]+(?P<f_name>\w+)[\s]*\(((int|bool|char|string)(.+)?)?\)[\s]*[\{]*",
+Function = {"name" : "Function",
+                    "init_pattern": r"(?P<return_type>(int|bool|char|string|void))[\s]+(?P<f_name>\w+)[\s]*\(((int|bool|char|string)(.+)?)?\)[\s]*[\{]*",
                     "final_pattern": r"}$"}
 
 
 For = {
-    "init_pattern" : r"^for\(",
+    "name" : "For",
+    "init_pattern" : r"for([\s]*)\(",
     "mid_pattern" : {"init_condition":r"(int [\w]+[\s]?\=[\s]?[\d]+\;)|(\;[\s]*)", #initial statement
 			                       "final_condition":r"((int)?[\w]+(\==|\<|\>|!=|\>=|\<=)[\d]+\;)|(\;[\s]*)", #final condition to stop for
 			                       "increment_operator":r"(([\w]+)?[\s]?(\++|\--|\+=[\d]+|\-=[\d]+|\/=[\d]+|\*=[\d]+)\))?" #incrementing operator [ex x++]
@@ -63,6 +110,7 @@ For = {
 
 
 While = {
+    "name" : "While",
     "init_pattern" : r"while[\s]?\(",
 
     "mid_pattern" : r"(([\w]+[\s]?(\==|\<|\>|!=|\>=|\<=)?[\d]*)|[\w]+)",
@@ -72,15 +120,26 @@ While = {
 
 
 DoWhile = {
-    "init_pattern" : r"do \{.+\}",
+    "name" : "DoWhile",
+    "init_pattern" : r"do([\s]*)\{.+\}",
     "final_pattern" : r"while\((([\s]*\([\w]+[\s]?(\==|\<|\>|!=|\>=|\<=)?[\d]*)|[\w])+\)"
 }
 
 
 Switch = {
-    "init_pattern" : r"switch[\s]*\(([\w]+|[\d]+)\)[\s]*\{",
+    "name" : "Switch",
+    "init_pattern" : r"(switch)([\s]*)\(([\w]+|[\d]+)\)([\s]*)(\{)*",
     "mid_pattern" : r"case ([\w]+|[\d]+)\:[\n]([\t]*(.*)[\n]*)*break;",
     "final_pattern" : r"break;((\n)*)(\s*)?\}"
 }
 
 lang_index = [Function, For, While, DoWhile, Switch]
+
+def finder(target):
+    for item in lang_index:
+        if re.search(item["init_pattern"], target)!=None:
+            print("-- Matching %s statement--" %item["name"])
+            return(True)
+
+
+#any(re.search("for",item["init_pattern"])!=None for item in lang_index)
