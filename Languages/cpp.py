@@ -1,6 +1,7 @@
 #lang:CPP
 #v:0.10
 import re
+import sys
 
 class FunctionClass:
     def __init__(self,
@@ -111,7 +112,7 @@ For_loop = {
 
 While_loop = {
     "name" : "While_loop",
-    "init_pattern" : r"while[\s]?\(",
+    "init_pattern" : r"[\}]+while[\s]?\(",
 
     "mid_pattern" : r"(([\w]+[\s]?(\==|\<|\>|!=|\>=|\<=)?[\d]*)|[\w]+)",
 
@@ -119,9 +120,9 @@ While_loop = {
 }
 
 
-DoWhile = {
+DoWhile_loop = {
     "name" : "DoWhile",
-    "init_pattern" : r"do([\s]*)\{.+\}",
+    "init_pattern" : r"do([\s]*)(\{*)",
     "final_pattern" : r"while\((([\s]*\([\w]+[\s]?(\==|\<|\>|!=|\>=|\<=)?[\d]*)|[\w])+\)"
 }
 
@@ -133,9 +134,9 @@ Switch = {
     "final_pattern" : r"break;((\n)*)(\s*)?\}"
 }
 
-lang_index = [Function, For_loop, While_loop, DoWhile, Switch]
+lang_index = [Function, For_loop, While_loop, DoWhile_loop, Switch]
 
-def finder(target, log=False): #change log to True to have things written
+def finder(target, log=False, filter=[]): #change log to True to have things written
     for item in lang_index:
         if re.search(item["init_pattern"], target)!=None:
             if log != False:

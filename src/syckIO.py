@@ -1,5 +1,5 @@
-import re, linecache
-
+import re
+import linecache
 testfile = "testfile"
 
 lines={}
