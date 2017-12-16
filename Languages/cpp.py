@@ -139,6 +139,10 @@ lang_index = [Function, For_loop, While_loop, DoWhile_loop, Switch]
 def finder(target, log=False, filter=[]): #change log to True to have things written
     for item in lang_index:
         if re.search(item["init_pattern"], target)!=None:
-            if log != False:
+            if log == True:
                 print("-- Matching %s statement--" %item["name"])
-            return(True, item["name"])
+            if re.search(r"\{", re.search(item["init_pattern"], target).group(0) )==None:
+                start_on_line=False
+            else:
+                start_on_line=True
+            return(True, item["name"], start_on_line)
