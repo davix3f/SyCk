@@ -1,3 +1,5 @@
+#!/usr/lib/python3
+
 import sys
 sys.path.append("../Languages")
 
@@ -8,12 +10,13 @@ import argparse
 
 
 #######CLI design
-parser = argparse.ArgumentParser()
-parser.add_argument("language",  help="Load language")
-parser.add_argument("--loop", "-l", help="Execute loop_detector", action="store_true")
-parser.add_argument("--function", "-f", help="Execute function_detector", action="store_true")
-parser.add_argument("--close","-c", help="Try to find where function and loops close", action="store_true")
-parser.add_argument("--log", help="Log <on/off> display logs of various functions")
+parser = argparse.ArgumentParser(prog="syck.py")
+parser.add_argument("language",  help="Load chosen language")
+parser.add_argument("filename", help="File to perform the check", metavar="/docs/main.lang")
+parser.add_argument("--loops", "-l", help="Execute loop_detector", action="store_true")
+parser.add_argument("--functions", "-f", help="Execute function_detector", action="store_true")
+parser.add_argument("--closed","-c", help="Try to find where function and loops close", action="store_true")
+parser.add_argument("--log", help="Log <on/off> display logs of various functions", metavar="on|off")
 
 arguments=parser.parse_args()
 
@@ -26,6 +29,13 @@ if arguments.language:
         print("The language module %s has not been found in SyCk/Languages" %language_str)
         exit()
     exec("language=%s" %language_str) #language=[language chosen in cli command]
+
+if arguments.filename:
+    syckIO.filename=arguments.filename
+    print(syckIO.filename)
+elif arguments.filename==None:
+    raise ImportError("None is not a valid file")
+
 #######
 
 for item in language.lang_classes:
@@ -76,9 +86,10 @@ class Elements:
             print(Elements.closed_l)
 
     def nearer_closer(list_a, list_b):
+        #item[0] = function/loop name
+        #item[1] = function/loop line(int)
         while len(list_a)!=0:
             for item in list_a:
-                print("Value:",item[1])
                 for i,d in enumerate(list_b):
                     if d>item[1]:
                         print(item[0],"closes at line",d)
@@ -87,7 +98,7 @@ class Elements:
                         break
 
     parent = []
-    parent_structure = []
+
 
     counter = {
         "function":0,
@@ -197,15 +208,15 @@ else:
     #print("%s is not a valid <log> setting. FALSE will be set\n" %arguments.log)
     log=False
 
-if arguments.loop:
+if arguments.loops:
     print("Using %s language module..\n" %language)
     loop_detector(log)
 
-if arguments.function:
+if arguments.functions:
     print("Using %s language module..\n" %language)
     function_detector(log)
 
-if arguments.close:
+if arguments.closed:
     function_detector(log)
     loop_detector(log)
     Elements.function_list()

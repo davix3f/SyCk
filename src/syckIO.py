@@ -1,23 +1,22 @@
 import re
 import linecache
-testfile = "testfile"
 
 lines={}
 
+filename=""
 
-def file_length(testfile=testfile):
-
-    lngt=0
-    f=open(testfile, "r")
+def file_length(filename):
+    length=0
+    f=open(filename, "r")
     for line in f:
-        lngt+=1
+        length+=1
     f.close()
-    return(lngt)
+    return(length)
 
 
 class Basic:
 	def openfile():
-		Basic.f=open("testfile","r")
+		Basic.f=open(filename,"r")
 		return(Basic.f)
 
 	def closefile():
@@ -27,7 +26,7 @@ def reader():
 	line_number=1
 	Basic.openfile()
 	for line in Basic.f:
-		lines[line_number]=linecache.getline(testfile, line_number)
+		lines[line_number]=linecache.getline(filename, line_number)
 		linecache.clearcache()
 		line_number+=1
 
