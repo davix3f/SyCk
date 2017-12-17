@@ -13,6 +13,8 @@ def file_length(filename):
     f.close()
     return(length)
 
+if filename!="":
+    file_length(filename)
 
 class Basic:
 	def openfile():
@@ -26,7 +28,7 @@ def reader():
 	line_number=1
 	Basic.openfile()
 	for line in Basic.f:
-		lines[line_number]=linecache.getline(filename, line_number)
+		lines[line_number]=linecache.getline(filename, line_number).replace("\n","")
 		linecache.clearcache()
 		line_number+=1
 

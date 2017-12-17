@@ -1,4 +1,4 @@
-#!/usr/lib/python3
+#!/usr/bin/env python3
 
 import sys
 sys.path.append("../Languages")
@@ -32,6 +32,7 @@ if arguments.language:
 
 if arguments.filename:
     syckIO.filename=arguments.filename
+    brackets.filename=arguments.filename
     print(syckIO.filename)
 elif arguments.filename==None:
     raise ImportError("None is not a valid file")
@@ -52,6 +53,7 @@ class Elements:
         "function" : {},
         "switch" : {},
         "if" : {},
+        "else": {},
         "for_loop" : {},
         "dowhile" : {},
         "while_loop" : {}
@@ -62,7 +64,7 @@ class Elements:
     closed_l=[]
 
     def loop_list(explicit_list=False):
-        for item in ("switch", "for_loop", "dowhile", "while_loop"):
+        for item in ("switch", "for_loop", "dowhile", "while_loop", "if", "else"):
             for i,d in enumerate(Elements.constructs[item]):
                 Elements.loop_l.append( (Elements.constructs[item][d].name,
                 Elements.constructs[item][d].dect_at) )
@@ -85,6 +87,14 @@ class Elements:
         if explicit_list==True:
             print(Elements.closed_l)
 
+    def kwfind(value):
+        for i,d in enumerate(Elements.constructs):
+            for item in Elements.constructs[d]:
+                if item==value:
+                    return("Elements.constructs[\"%s\"][\"%s\"]" %(d, item), #0
+                                Elements.constructs[d][item], #1
+                                item) #2
+
     def nearer_closer(list_a, list_b):
         #item[0] = function/loop name
         #item[1] = function/loop line(int)
@@ -93,18 +103,22 @@ class Elements:
                 for i,d in enumerate(list_b):
                     if d>item[1]:
                         print(item[0],"closes at line",d)
+                        Elements.kwfind(item[0])[1].end=d
                         list_a.pop(0)
                         list_b.remove(d)
                         break
 
     parent = []
-
+    f_d_executed=False
+    l_d_executed=False
 
     counter = {
         "function":0,
         "switch":0,
         "for_loop":0,
         "dowhile":0,
+        "if":0,
+        "else":0,
         "while_loop":0 }
 
     def getElement(kword):
@@ -113,6 +127,10 @@ class Elements:
 
 #====================================================================
 def function_detector(log=False):
+    if Elements.f_d_executed==True:
+        print("function_detector already executed")
+        return(0)
+    Elements.f_d_executed=True
     for item in lines:
 
         function_match = re.search(language.Function["init_pattern"], lines[item])
@@ -140,7 +158,7 @@ def function_detector(log=False):
                         #                                                                  b{0}o i=2  -> b2o
                     open_l.sort()
                     for i, d in enumerate(open_l):
-                        if d > item:
+                        if d >= item:
                             if log==True:
                                 print(brackets.found["open"]["b%so"%i].code,
                                     "[foundlist item", i,  "located at line "+str(d)+"]",
@@ -148,14 +166,20 @@ def function_detector(log=False):
                             return(d)
                 #Assigning to the nearest
                 exec("Elements.constructs[\"function\"][\"%s\"].start=%s" %(function_match.group(3), function_start()) )
+                return(0)
 
             else:        # belongs to if: function_match
                 #But if the starting { is found in the same line of function detection, then the start is setted at this line
                 if log==True:
                     print("\nFunction", function_match.group(3), " starting at", item, "\n")
                 exec("Elements.constructs[\"function\"][\"%s\"].start=%s" %(function_match.group(3), item) )
+                return(0)
 
-def loop_detector(log=False): #this one work fancily better
+def loop_detector(log=False):
+    if Elements.l_d_executed==True:
+        print("loop_detector already executed")
+        return(0)
+    Elements.f_d_executed=True
     for item in lines:
         try:
             #Here we instatiate and organize loops like for0,for1, while0, ect.
@@ -176,12 +200,12 @@ def loop_detector(log=False): #this one work fancily better
                                 open_l.append(brackets.found["open"][d].line)
                             open_l.sort()
                             for i,d in enumerate(open_l):
-                                if d > item:
+                                if d >= item:
                                     if log==True:
                                         print(brackets.found["open"]["b%so"%i].code,
                                             "[foundlist item", i,  "located at line "+str(d)+"]",
                                             "is starting", kind_code, "\n")
-                                    return(d)
+                                    return(d) #end of loop_start
 
                     exec("{0}=language.{1}({2}, \"{0}\", start={3})".format(kind_code,
                         kind.title().replace("_Loop","").replace("while", "While")+"Class",
@@ -197,7 +221,6 @@ def loop_detector(log=False): #this one work fancily better
             pass
 
 
-
 #    STILL CLI
 
 if arguments.log == "on":
@@ -208,17 +231,21 @@ else:
     #print("%s is not a valid <log> setting. FALSE will be set\n" %arguments.log)
     log=False
 
-if arguments.loops:
-    print("Using %s language module..\n" %language)
-    loop_detector(log)
 
 if arguments.functions:
-    print("Using %s language module..\n" %language)
+    print("FUNCTION DETECTOR\nUsing %s language module..\n" %language)
     function_detector(log)
 
-if arguments.closed:
-    function_detector(log)
+if arguments.loops:
+    print("LOOP DETECTOR\nUsing %s language module..\n" %language)
     loop_detector(log)
+
+
+if arguments.closed:
+    if Elements.f_d_executed==False:
+        function_detector(False)
+    if Elements.l_d_executed==False:
+        loop_detector(False)
     Elements.function_list()
     Elements.loop_list()
     Elements.closed_list()
