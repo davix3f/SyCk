@@ -10,8 +10,7 @@ class FunctionClass:
                         dect_at,
                         start=None,
                         args=None,
-                        end=None,
-                        nested={}):
+                        end=None):
 
         self.name = name
         self.return_type = return_type
@@ -19,7 +18,6 @@ class FunctionClass:
         self.dect_at = dect_at
         self.start = start
         self.end = end
-        self.nested = nested
 
     def calculateExtension(start, end):
         self.extension = (start, end)
@@ -32,14 +30,12 @@ class ForClass:
                         name,
                         start=None,
                         args=None,
-                        end=None,
-                        nested={}):
+                        end=None):
         self.name = name
         self.args = args
         self.dect_at = dect_at
         self.start = start
         self.end = end
-        self.nested = nested
 
 
 
@@ -49,14 +45,12 @@ class WhileClass:
                         name,
                         start=None,
                         args=None,
-                        end=None,
-                        nested={}):
+                        end=None):
         self.name = name
         self.args = args
         self.dect_at = dect_at
         self.start = start
         self.end = end
-        self.nested = nested
 
 
 class DoWhileClass:
@@ -65,14 +59,12 @@ class DoWhileClass:
                         name,
                         start=None,
                         args=None,
-                        end=None,
-                        nested={}):
+                        end=None):
         self.name = name
         self.args = args
         self.dect_at = dect_at
         self.start = start
         self.end = end
-        self.nested = nested
 
 class SwitchClass:
     def __init__(self,
@@ -80,18 +72,41 @@ class SwitchClass:
                         name,
                         start=None,
                         args=None,
-                        end=None,
-                        nested={}):
+                        end=None):
         self.name = name
         self.args = args
         self.dect_at = dect_at
         self.start = start
         self.end = end
-        self.nested = nested
+
+class IfClass:
+    def __init__(self,
+                        dect_at,
+                        name,
+                        start=None,
+                        args=None,
+                        end=None):
+        self.name = name
+        self.args = args
+        self.dect_at = dect_at
+        self.start = start
+        self.end = end
+
+class ElseClass:
+    def __init__(self,
+                        dect_at,
+                        name,
+                        start=None,
+                        args=None,
+                        end=None):
+        self.name = name
+        self.args = args
+        self.dect_at = dect_at
+        self.start = start
+        self.end = end
 
 #List of all langclasses. Keep it updated.
-
-lang_classes = [ ForClass, WhileClass, DoWhileClass, SwitchClass, FunctionClass ]
+lang_classes = [ ForClass, WhileClass, DoWhileClass, SwitchClass, FunctionClass, IfClass ]
 
 
 Function = {"name" : "Function",
@@ -134,7 +149,17 @@ Switch = {
     "final_pattern" : r"break;((\n)*)(\s*)?\}"
 }
 
-lang_index = [Function, For_loop, While_loop, DoWhile_loop, Switch]
+If = {
+    "name":"if",
+    "init_pattern": r"if[\s]*[\(]?[\{]?",
+}
+
+Else ={
+    "name": "else",
+    "init_pattern": r"else[\s]*(\{?)"
+}
+
+lang_index = [Function, For_loop, While_loop, DoWhile_loop, Switch, If, Else]
 
 def finder(target, log=False, filter=[]): #change log to True to have things written
     for item in lang_index:
