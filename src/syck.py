@@ -7,6 +7,8 @@ import re
 import syckIO
 import brackets
 import argparse
+from time import sleep
+from time import ctime
 
 
 #######CLI design
@@ -24,24 +26,24 @@ if arguments.language:
     language_str=arguments.language
     try:
         exec("import %s" %language_str)
-        print("-- %s language successfully loaded --"%arguments.language.upper())
+        print("\n",ctime(),"\n")
+        print("-- %s language successfully loaded --\n"%arguments.language.upper())
     except ImportError:
         print("The language module %s has not been found in SyCk/Languages" %language_str)
         exit()
     exec("language=%s" %language_str) #language=[language chosen in cli command]
+    for item in language.lang_classes:
+        print(item)
 
 if arguments.filename:
     syckIO.filename=arguments.filename
     brackets.filename=arguments.filename
-    print(syckIO.filename)
+    print("\nFile:",syckIO.filename,"\n")
 elif arguments.filename==None:
-    raise ImportError("None is not a valid file")
+    raise ImportError("\'None\' is not a valid file")
 
 #######
 
-for item in language.lang_classes:
-    print(item)
-print("\n")
 
 lines = syckIO.lines
 syckIO.reader()
@@ -64,23 +66,26 @@ class Elements:
     closed_l=[]
 
     def loop_list(explicit_list=False):
+        Elements.loop_l=[]
         for item in ("switch", "for_loop", "dowhile", "while_loop", "if", "else"):
             for i,d in enumerate(Elements.constructs[item]):
                 Elements.loop_l.append( (Elements.constructs[item][d].name,
-                Elements.constructs[item][d].dect_at) )
+                                                                Elements.constructs[item][d].dect_at) )
         Elements.loop_l.sort()
         if explicit_list==True:
             print(Elements.loop_l)
 
     def function_list(explicit_list=False):
+        Elements.function_l=[]
         for i,d in enumerate(Elements.constructs["function"]):
             Elements.function_l.append( (Elements.constructs["function"][d].name,
-            Elements.constructs["function"][d].start) )
+                                                                    Elements.constructs["function"][d].start) )
         Elements.function_l.sort()
         if explicit_list==True:
             print(Elements.function_l)
 
     def closed_list(explicit_list=False):
+        Elements.closed_l=[]
         for i,d in enumerate(brackets.found["closed"]):
             Elements.closed_l.append(brackets.found["closed"][d].line)
         Elements.closed_l.sort()
@@ -96,21 +101,18 @@ class Elements:
                                 item) #2
 
     def nearer_closer(list_a, list_b):
-        #item[0] = function/loop name
-        #item[1] = function/loop line(int)
+        #list_a[0][0] = function/loop name
+        #list_a[0][1] = function/loop line(int)
         while len(list_a)!=0:
-            for item in list_a:
                 for i,d in enumerate(list_b):
-                    if d>item[1]:
-                        print(item[0],"closes at line",d)
-                        Elements.kwfind(item[0])[1].end=d
-                        list_a.pop(0)
+                    if list_a[0][1]<d:
+                        print(list_a[0][0],"starts at", list_a[0][1],"and closes at line",d)
+                        Elements.kwfind(list_a[0][0])[1].end=d
+                        list_a.remove(list_a[0]) #no pop(0) for clearer meaning
                         list_b.remove(d)
                         break
 
     parent = []
-    f_d_executed=False
-    l_d_executed=False
 
     counter = {
         "function":0,
@@ -127,10 +129,6 @@ class Elements:
 
 #====================================================================
 def function_detector(log=False):
-    if Elements.f_d_executed==True:
-        print("function_detector already executed")
-        return(0)
-    Elements.f_d_executed=True
     for item in lines:
 
         function_match = re.search(language.Function["init_pattern"], lines[item])
@@ -176,10 +174,6 @@ def function_detector(log=False):
                 return(0)
 
 def loop_detector(log=False):
-    if Elements.l_d_executed==True:
-        print("loop_detector already executed")
-        return(0)
-    Elements.f_d_executed=True
     for item in lines:
         try:
             #Here we instatiate and organize loops like for0,for1, while0, ect.
@@ -242,13 +236,12 @@ if arguments.loops:
 
 
 if arguments.closed:
-    if Elements.f_d_executed==False:
-        function_detector(False)
-    if Elements.l_d_executed==False:
-        loop_detector(False)
+    print("-- Executing loop/function closer --\n")
+    function_detector()
+    loop_detector()
     Elements.function_list()
     Elements.loop_list()
     Elements.closed_list()
 
-    for item in (Elements.loop_l, Elements.function_l):
-        Elements.nearer_closer(item, Elements.closed_l)
+    Elements.nearer_closer(Elements.loop_l, Elements.closed_l)
+    Elements.nearer_closer(Elements.function_l, Elements.closed_l)
