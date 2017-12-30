@@ -1,7 +1,7 @@
 import re
-import cpp
 import linecache
-
+import syckIO
+filename=""
 class Bracket:
 
     def __init__(self, code, type, line, column, starts=None, ends = None):
@@ -16,19 +16,16 @@ found = { "open":{}, "closed":{} }
 
 length = 0
 
-f = open("testfile", "r")
-for line in f:
-    length += 1
 
 def BracketFinder(output_log = 0):
     selected_line = 1
     num_open = 0
     num_close = 0
-    while selected_line <= length:
+    while selected_line <= syckIO.file_length(filename):
 
-        match_open = re.search(r"{", linecache.getline("testfile", selected_line))
+        match_open = re.search(r"{", linecache.getline(filename, selected_line))
 
-        match_close = re.search(r"}", linecache.getline("testfile", selected_line))
+        match_close = re.search(r"}", linecache.getline(filename, selected_line))
 
         if match_open != None:
             if output_log == 1:

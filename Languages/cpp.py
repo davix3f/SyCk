@@ -1,6 +1,7 @@
 #lang:CPP
 #v:0.10
 import re
+import sys
 
 class FunctionClass:
     def __init__(self,
@@ -9,8 +10,7 @@ class FunctionClass:
                         dect_at,
                         start=None,
                         args=None,
-                        end=None,
-                        nested={}):
+                        end=None):
 
         self.name = name
         self.return_type = return_type
@@ -18,7 +18,6 @@ class FunctionClass:
         self.dect_at = dect_at
         self.start = start
         self.end = end
-        self.nested = nested
 
     def calculateExtension(start, end):
         self.extension = (start, end)
@@ -31,14 +30,12 @@ class ForClass:
                         name,
                         start=None,
                         args=None,
-                        end=None,
-                        nested={}):
+                        end=None):
         self.name = name
         self.args = args
         self.dect_at = dect_at
         self.start = start
         self.end = end
-        self.nested = nested
 
 
 
@@ -48,14 +45,12 @@ class WhileClass:
                         name,
                         start=None,
                         args=None,
-                        end=None,
-                        nested={}):
+                        end=None):
         self.name = name
         self.args = args
         self.dect_at = dect_at
         self.start = start
         self.end = end
-        self.nested = nested
 
 
 class DoWhileClass:
@@ -64,14 +59,12 @@ class DoWhileClass:
                         name,
                         start=None,
                         args=None,
-                        end=None,
-                        nested={}):
+                        end=None):
         self.name = name
         self.args = args
         self.dect_at = dect_at
         self.start = start
         self.end = end
-        self.nested = nested
 
 class SwitchClass:
     def __init__(self,
@@ -79,18 +72,41 @@ class SwitchClass:
                         name,
                         start=None,
                         args=None,
-                        end=None,
-                        nested={}):
+                        end=None):
         self.name = name
         self.args = args
         self.dect_at = dect_at
         self.start = start
         self.end = end
-        self.nested = nested
+
+class IfClass:
+    def __init__(self,
+                        dect_at,
+                        name,
+                        start=None,
+                        args=None,
+                        end=None):
+        self.name = name
+        self.args = args
+        self.dect_at = dect_at
+        self.start = start
+        self.end = end
+
+class ElseClass:
+    def __init__(self,
+                        dect_at,
+                        name,
+                        start=None,
+                        args=None,
+                        end=None):
+        self.name = name
+        self.args = args
+        self.dect_at = dect_at
+        self.start = start
+        self.end = end
 
 #List of all langclasses. Keep it updated.
-
-lang_classes = [ ForClass, WhileClass, DoWhileClass, SwitchClass, FunctionClass ]
+lang_classes = [ ForClass, WhileClass, DoWhileClass, SwitchClass, FunctionClass, IfClass ]
 
 
 Function = {"name" : "Function",
@@ -111,7 +127,7 @@ For_loop = {
 
 While_loop = {
     "name" : "While_loop",
-    "init_pattern" : r"while[\s]?\(",
+    "init_pattern" : r"[\}]+while[\s]?\(",
 
     "mid_pattern" : r"(([\w]+[\s]?(\==|\<|\>|!=|\>=|\<=)?[\d]*)|[\w]+)",
 
@@ -119,9 +135,9 @@ While_loop = {
 }
 
 
-DoWhile = {
+DoWhile_loop = {
     "name" : "DoWhile",
-    "init_pattern" : r"do([\s]*)\{.+\}",
+    "init_pattern" : r"do([\s]*)(\{*)",
     "final_pattern" : r"while\((([\s]*\([\w]+[\s]?(\==|\<|\>|!=|\>=|\<=)?[\d]*)|[\w])+\)"
 }
 
@@ -133,11 +149,25 @@ Switch = {
     "final_pattern" : r"break;((\n)*)(\s*)?\}"
 }
 
-lang_index = [Function, For_loop, While_loop, DoWhile, Switch]
+If = {
+    "name":"if",
+    "init_pattern": r"if[\s]*[\(]?[\{]?",
+}
 
-def finder(target, log=False): #change log to True to have things written
+Else ={
+    "name": "else",
+    "init_pattern": r"else[\s]*(\{?)"
+}
+
+lang_index = [Function, For_loop, While_loop, DoWhile_loop, Switch, If, Else]
+
+def finder(target, log=False, filter=[]): #change log to True to have things written
     for item in lang_index:
         if re.search(item["init_pattern"], target)!=None:
-            if log != False:
+            if log == True:
                 print("-- Matching %s statement--" %item["name"])
-            return(True, item["name"])
+            if re.search(r"\{", re.search(item["init_pattern"], target).group(0) )==None:
+                start_on_line=False
+            else:
+                start_on_line=True
+            return(True, item["name"], start_on_line)

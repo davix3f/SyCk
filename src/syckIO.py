@@ -1,23 +1,24 @@
-import re, linecache
-
-testfile = "testfile"
+import re
+import linecache
 
 lines={}
 
+filename=""
 
-def file_length(testfile=testfile):
-
-    lngt=0
-    f=open(testfile, "r")
+def file_length(filename):
+    length=0
+    f=open(filename, "r")
     for line in f:
-        lngt+=1
+        length+=1
     f.close()
-    return(lngt)
+    return(length)
 
+if filename!="":
+    file_length(filename)
 
 class Basic:
 	def openfile():
-		Basic.f=open("testfile","r")
+		Basic.f=open(filename,"r")
 		return(Basic.f)
 
 	def closefile():
@@ -27,7 +28,7 @@ def reader():
 	line_number=1
 	Basic.openfile()
 	for line in Basic.f:
-		lines[line_number]=linecache.getline(testfile, line_number)
+		lines[line_number]=linecache.getline(filename, line_number).replace("\n","")
 		linecache.clearcache()
 		line_number+=1
 

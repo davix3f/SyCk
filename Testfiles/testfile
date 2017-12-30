@@ -1,19 +1,38 @@
 #include <iostream>
 using namespace std;
 
-const double pi = 3.14159;
+void xdlol()
+{
+    cout << xd;
+}
 
 int main()
 {
-float length, width, area;
+     int n, num, digit, rev = 0;
 
-cout << "Enter The Length Of The Rectangle: ";
-cin >> length;
-cout << "Enter The Width Of Rectangle: ";
-cin >> width;
-area = length*width;
+     cout << "Enter a positive number: ";
+     cin >> num;
 
-cout <<"The area of the rectangle is : "<< area << endl;
+     n = num;
 
-return 0;
+     do
+     {
+         digit = num % 10;
+         rev = (rev * 10) + digit;
+         num = num / 10;
+     } while (num != 0);
+
+     for(x=z; x>89; x--)
+     {
+        cout << x;
+     }
+
+     cout << " The reverse of the number is: " << rev << endl;
+
+     if (n == rev)
+         cout << " The number is a palindrome";
+     else
+         cout << " The number is not a palindrome";
+
+    return 0;
 }
