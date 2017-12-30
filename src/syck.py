@@ -27,7 +27,7 @@ if arguments.language:
     language_str=arguments.language
     try:
         exec("import %s" %language_str)
-        print("\n",ctime(),"\n")
+        print("\n"+ctime(),"\n")
         print("-- %s language successfully loaded --\n"%arguments.language.upper())
     except ImportError:
         print("The language module %s has not been found in SyCk/Languages" %language_str)
@@ -71,8 +71,9 @@ class Elements:
         for item in ("switch", "for_loop", "dowhile", "while_loop", "if", "else"):
             for i,d in enumerate(Elements.constructs[item]):
                 Elements.loop_l.append( (Elements.constructs[item][d].name,
-                                                                Elements.constructs[item][d].start) )
-                                                                
+                                                                Elements.constructs[item][d].start,
+                                                                Elements.constructs[item][d].dect_at ) )
+
         Elements.loop_l=sorted(Elements.loop_l, key=operator.itemgetter(1))
         if explicit_list==True:
             print(Elements.loop_l)
@@ -81,7 +82,8 @@ class Elements:
         Elements.function_l=[]
         for i,d in enumerate(Elements.constructs["function"]):
             Elements.function_l.append( (Elements.constructs["function"][d].name,
-                                                                    Elements.constructs["function"][d].start) )
+                                                                    Elements.constructs["function"][d].start,
+                                                                    Elements.constructs["function"][d].dect_at ) )
         Elements.function_l.sort()
         if explicit_list==True:
             print(Elements.function_l)
@@ -103,12 +105,16 @@ class Elements:
                                 item) #2
 
     def nearer_closer(list_a, list_b):
-        #list_a[0][0] = function/loop name
-        #list_a[0][1] = function/loop line(int)
+        #list_a[x][0] = function/loop name
+        #list_a[x][1] = function/loop line(int)
+        #list_a[x][2] = detected_at
         while len(list_a)!=0:
                 for i,d in enumerate(list_b):
                     if list_a[-1][1]<d:
-                        print(list_a[-1][0],"starts at", list_a[-1][1],"and closes at line",d)
+                        print(list_a[-1][0], #'for0'
+                                "[init_pattern detected at "+ str(list_a[-1][2])+"]", #init_pattern detected at [line]
+                                "starts at", list_a[-1][1], #starts at [line]
+                                "and closes at line",d) #and closes at [line]
                         Elements.kwfind(list_a[-1][0])[1].end=d
                         list_a.remove(list_a[-1]) #no pop(0) for clearer meaning
                         list_b.remove(d)
@@ -222,7 +228,7 @@ if arguments.log == "on":
 elif arguments.log == "off":
     log=False
 else:
-    #print("%s is not a valid <log> setting. FALSE will be set\n" %arguments.log)
+    print("\'%s\' is not a valid <log> setting. FALSE will be set\n" %arguments.log)
     log=False
 
 
