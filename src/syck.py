@@ -5,6 +5,7 @@ sys.path.append("../Languages")
 
 import re
 import syckIO
+import operator
 import brackets
 import argparse
 from time import sleep
@@ -70,8 +71,9 @@ class Elements:
         for item in ("switch", "for_loop", "dowhile", "while_loop", "if", "else"):
             for i,d in enumerate(Elements.constructs[item]):
                 Elements.loop_l.append( (Elements.constructs[item][d].name,
-                                                                Elements.constructs[item][d].dect_at) )
-        Elements.loop_l.sort()
+                                                                Elements.constructs[item][d].start) )
+                                                                
+        Elements.loop_l=sorted(Elements.loop_l, key=operator.itemgetter(1))
         if explicit_list==True:
             print(Elements.loop_l)
 
@@ -105,10 +107,10 @@ class Elements:
         #list_a[0][1] = function/loop line(int)
         while len(list_a)!=0:
                 for i,d in enumerate(list_b):
-                    if list_a[0][1]<d:
-                        print(list_a[0][0],"starts at", list_a[0][1],"and closes at line",d)
-                        Elements.kwfind(list_a[0][0])[1].end=d
-                        list_a.remove(list_a[0]) #no pop(0) for clearer meaning
+                    if list_a[-1][1]<d:
+                        print(list_a[-1][0],"starts at", list_a[-1][1],"and closes at line",d)
+                        Elements.kwfind(list_a[-1][0])[1].end=d
+                        list_a.remove(list_a[-1]) #no pop(0) for clearer meaning
                         list_b.remove(d)
                         break
 
@@ -164,14 +166,12 @@ def function_detector(log=False):
                             return(d)
                 #Assigning to the nearest
                 exec("Elements.constructs[\"function\"][\"%s\"].start=%s" %(function_match.group(3), function_start()) )
-                return(0)
 
             else:        # belongs to if: function_match
                 #But if the starting { is found in the same line of function detection, then the start is setted at this line
                 if log==True:
                     print("\nFunction", function_match.group(3), " starting at", item, "\n")
                 exec("Elements.constructs[\"function\"][\"%s\"].start=%s" %(function_match.group(3), item) )
-                return(0)
 
 def loop_detector(log=False):
     for item in lines:
@@ -245,3 +245,7 @@ if arguments.closed:
 
     Elements.nearer_closer(Elements.loop_l, Elements.closed_l)
     Elements.nearer_closer(Elements.function_l, Elements.closed_l)
+
+if not arguments.functions and arguments.loops and arguments.closed:
+    print("No command specified -- stopping")
+    exit()
