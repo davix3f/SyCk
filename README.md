@@ -35,3 +35,5 @@ Sorry for any english syntax error, I don't speak english natively :c
   - [ ] GUI
     - [ ] curses
     - [ ] GTK3+
+
+[Wiki](https://gitlab.com/davix3f/SyCk/wikis/home)
