@@ -4,6 +4,7 @@ import sys
 sys.path.append("../Languages")
 
 import re
+import custom_log
 import syckIO
 import operator
 import brackets
@@ -15,7 +16,7 @@ from time import ctime
 #######CLI design
 parser = argparse.ArgumentParser(prog="syck.py")
 parser.add_argument("language",  help="Load chosen language")
-parser.add_argument("filename", help="File to perform the check", metavar="/docs/main.lang")
+parser.add_argument("filename", help="File to perform the check", metavar="/mypath/myfile.lang")
 parser.add_argument("--loops", "-l", help="Execute loop_detector", action="store_true")
 parser.add_argument("--functions", "-f", help="Execute function_detector", action="store_true")
 parser.add_argument("--closed","-c", help="Try to find where function and loops close", action="store_true")
@@ -28,9 +29,9 @@ if arguments.language:
     try:
         exec("import %s" %language_str)
         print("\n"+ctime(),"\n")
-        print("-- %s language successfully loaded --\n"%arguments.language.upper())
+        custom_log.log(("-- %s language successfully loaded --\n"%arguments.language.upper()), custom_log.color.GREEN,)
     except ImportError:
-        print("The language module %s has not been found in SyCk/Languages" %language_str)
+        custom_log.log(("The language module \'%s\' has not been found in SyCk/Languages" %language_str), [custom_log.color.RED, custom_log.color.BOLD])
         exit()
     exec("language=%s" %language_str) #language=[language chosen in cli command]
     for item in language.lang_classes:
