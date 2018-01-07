@@ -137,48 +137,55 @@ class Elements:
             print(element)
 
 #====================================================================
-def function_detector(log=False):
-    for item in lines:
 
-        function_match = re.search(language.Function["init_pattern"], lines[item])
-        if function_match: #if found a line matching the <type> <function name> ()
+try: #Overriding the standard function_detector, if found another in language file
+    if language.function_detector:
+        print("Importing function_detector function from %s\n" %language_str)
+        function_detector = language.function_detector
+except AttributeError:
 
-            #A new "function" object is created, with name, return type and the LINE DETECTED
-            # which is different from the line where the function STARTS
-            Elements.constructs["function"][function_match.group("f_name")] = \
-                language.FunctionClass(name=function_match.group("f_name"),
-                        return_type = function_match.group("return_type"),
-                        dect_at = item)
-            #The detected class name is appended to the ""parent_function"" list, which is needed for closing detection
-            Elements.parent.append(function_match.group("f_name"))
-            if log==True:
-                print("--", function_match.group(3), "is set as parent_function --")
-                print(Elements.parent)
+    def function_detector(log=False):
+        for item in lines:
 
-            #If the starting { of the function is not in the line where the function is detected, the program sets it to the nearest found
-            if re.search(r"\{" , function_match.group(0)) == None:
+            function_match = re.search(language.Function["init_pattern"], lines[item])
+            if function_match: #if found a line matching the <type> <function name> ()
 
-                def function_start():
-                    open_l = []
-                    for i, _ in enumerate(brackets.found["open"]):
-                        open_l.append(brackets.found["open"]["b{0}o".format(i)].line)
-                        #                                                                  b{0}o i=2  -> b2o
-                    open_l.sort()
-                    for i, d in enumerate(open_l):
-                        if d >= item:
-                            if log==True:
-                                print(brackets.found["open"]["b%so"%i].code,
-                                    "[foundlist item", i,  "located at line "+str(d)+"]",
-                                    "is starting", function_match.group(3), "\n")
-                            return(d)
-                #Assigning to the nearest
-                exec("Elements.constructs[\"function\"][\"%s\"].start=%s" %(function_match.group(3), function_start()) )
-
-            else:        # belongs to if: function_match
-                #But if the starting { is found in the same line of function detection, then the start is setted at this line
+                #A new "function" object is created, with name, return type and the LINE DETECTED
+                # which is different from the line where the function STARTS
+                Elements.constructs["function"][function_match.group("f_name")] = \
+                    language.FunctionClass(name=function_match.group("f_name"),
+                            return_type = function_match.group("return_type"),
+                            dect_at = item)
+                #The detected class name is appended to the ""parent_function"" list, which is needed for closing detection
+                Elements.parent.append(function_match.group("f_name"))
                 if log==True:
-                    print("\nFunction", function_match.group(3), " starting at", item, "\n")
-                exec("Elements.constructs[\"function\"][\"%s\"].start=%s" %(function_match.group(3), item) )
+                    print("--", function_match.group(3), "is set as parent_function --")
+                    print(Elements.parent)
+
+                #If the starting { of the function is not in the line where the function is detected, the program sets it to the nearest found
+                if re.search(r"\{" , function_match.group(0)) == None:
+
+                    def function_start():
+                        open_l = []
+                        for i, _ in enumerate(brackets.found["open"]):
+                            open_l.append(brackets.found["open"]["b{0}o".format(i)].line)
+                            #                                                                  b{0}o i=2  -> b2o
+                        open_l.sort()
+                        for i, d in enumerate(open_l):
+                            if d >= item:
+                                if log==True:
+                                    print(brackets.found["open"]["b%so"%i].code,
+                                        "[foundlist item", i,  "located at line "+str(d)+"]",
+                                        "is starting", function_match.group(3), "\n")
+                                return(d)
+                    #Assigning to the nearest
+                    exec("Elements.constructs[\"function\"][\"%s\"].start=%s" %(function_match.group(3), function_start()) )
+
+                else:        # belongs to if: function_match
+                    #But if the starting { is found in the same line of function detection, then the start is setted at this line
+                    if log==True:
+                        print("\nFunction", function_match.group(3), " starting at", item, "\n")
+                    exec("Elements.constructs[\"function\"][\"%s\"].start=%s" %(function_match.group(3), item) )
 
 def loop_detector(log=False):
     for item in lines:
