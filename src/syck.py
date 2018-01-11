@@ -74,8 +74,8 @@ class Elements:
                 Elements.loop_l.append( (Elements.constructs[item][d].name,
                                                                 Elements.constructs[item][d].start,
                                                                 Elements.constructs[item][d].dect_at ) )
-
-        Elements.loop_l=sorted(Elements.loop_l, key=operator.itemgetter(1))
+        if len(Elements.loop_l)>0:
+            Elements.loop_l=sorted(Elements.loop_l, key=operator.itemgetter(1))
         if explicit_list==True:
             print(Elements.loop_l)
 
