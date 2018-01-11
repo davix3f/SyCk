@@ -4,7 +4,10 @@ import sys
 sys.path.append("../Languages")
 
 import re
-import custom_log
+
+import syckLOG
+log=syckLOG.log
+
 import syckIO
 import operator
 import brackets
@@ -29,9 +32,9 @@ if arguments.language:
     try:
         exec("import %s" %language_str)
         print("\n"+ctime(),"\n")
-        custom_log.log(("-- %s language successfully loaded --\n"%arguments.language.upper()), custom_log.color.GREEN,)
+        log(("-- %s language successfully loaded --\n"%arguments.language.upper()), syckLOG.color.GREEN,)
     except ImportError:
-        custom_log.log(("The language module \'%s\' has not been found in SyCk/Languages" %language_str), [custom_log.color.RED, custom_log.color.BOLD])
+        log(("The language module \'%s\' has not been found in SyCk/Languages" %language_str), [syckLOG.color.RED, syckLOG.color.BOLD])
         exit()
     exec("language=%s" %language_str) #language=[language chosen in cli command]
     for item in language.lang_classes:
@@ -70,10 +73,11 @@ class Elements:
     def loop_list(explicit_list=False):
         Elements.loop_l=[]
         for item in ("switch", "for_loop", "dowhile", "while_loop", "if", "else"):
-            for i,d in enumerate(Elements.constructs[item]):
-                Elements.loop_l.append( (Elements.constructs[item][d].name,
-                                                                Elements.constructs[item][d].start,
-                                                                Elements.constructs[item][d].dect_at ) )
+            if len(item)>0:
+                for i,d in enumerate(Elements.constructs[item]):
+                    Elements.loop_l.append( (Elements.constructs[item][d].name,
+                                                                    Elements.constructs[item][d].start,
+                                                                    Elements.constructs[item][d].dect_at ) )
 
         Elements.loop_l=sorted(Elements.loop_l, key=operator.itemgetter(1))
         if explicit_list==True:
@@ -213,8 +217,12 @@ def loop_detector(log=False):
                                         print(brackets.found["open"]["b%so"%i].code,
                                             "[foundlist item", i,  "located at line "+str(d)+"]",
                                             "is starting", kind_code, "\n")
+
                                     return(d) #end of loop_start
 
+                    if loop_start() == None:
+                        log("Warning: no { found for %s at line %s!" %(lines[item],  ), [syckLOG.color.RED, syckLOG.color.BOLD])
+                        exit()
                     exec("{0}=language.{1}({2}, \"{0}\", start={3})".format(kind_code,
                         kind.title().replace("_Loop","").replace("while", "While")+"Class",
                         item,
