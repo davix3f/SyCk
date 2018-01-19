@@ -164,7 +164,6 @@ except AttributeError:
                 Elements.parent.append(function_match.group("f_name"))
                 if log==True:
                     print("--", function_match.group(3), "is set as parent_function --")
-                    print(Elements.parent)
 
                 #If the starting { of the function is not in the line where the function is detected, the program sets it to the nearest found
                 if re.search(r"\{" , function_match.group(0)) == None:
@@ -206,21 +205,20 @@ def loop_detector(log=False):
                     Elements.counter[str(kind)]+=1 #Update the 'for' counter
 
                     if language.finder(lines[item])[2]!=True:
-                        def loop_start():
+                        def loop_start(silent=False):
                             open_l=[]
                             for i,d in enumerate(brackets.found["open"]):
                                 open_l.append(brackets.found["open"][d].line)
                             open_l.sort()
                             for i,d in enumerate(open_l):
                                 if d >= item:
-                                    if log==True:
+                                    if silent==False:
                                         print(brackets.found["open"]["b%so"%i].code,
                                             "[foundlist item", i,  "located at line "+str(d)+"]",
                                             "is starting", kind_code, "\n")
+                                        return(d) #end of loop_start
 
-                                    return(d) #end of loop_start
-
-                    if loop_start() == None:
+                    if loop_start(Truecd) == None:
                         log("Warning: no { found for %s at line %s!" %(lines[item],  ), [syckLOG.color.RED, syckLOG.color.BOLD])
                         exit()
                     exec("{0}=language.{1}({2}, \"{0}\", start={3})".format(kind_code,
@@ -254,7 +252,7 @@ if arguments.functions:
 
 if arguments.loops:
     print("LOOP DETECTOR\nUsing %s language module..\n" %language)
-    loop_detector(log)
+    loop_detector(True)
 
 
 if arguments.closed:
