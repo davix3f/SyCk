@@ -110,18 +110,18 @@ lang_classes = [ ForClass, WhileClass, DoWhileClass, SwitchClass, FunctionClass,
 
 
 Function = {"name" : "Function",
-                    "init_pattern": r"(?P<return_type>(int|bool|char|string|void))[\s]+(?P<f_name>\w+)[\s]*\(((int|bool|char|string)(.+)?)?\)[\s]*[\{]*",
-                    "final_pattern": r"}$"}
+            "init_pattern": r"((?P<return_type>(int|bool|char|string|void))[\s]+)?(?P<f_name>\w+)[\s]*\(((int|bool|char|string)(.+)?)?\)[\s]*[\{]*",
+            "final_pattern": r"}$"}
 
 
 For_loop = {
     "name" : "For_loop",
     "init_pattern" : r"for([\s]*)\(",
     "mid_pattern" : {"init_condition":r"(int [\w]+[\s]?\=[\s]?[\d]+\;)|(\;[\s]*)", #initial statement
-			                       "final_condition":r"((int)?[\w]+(\==|\<|\>|!=|\>=|\<=)[\d]+\;)|(\;[\s]*)", #final condition to stop for
-			                       "increment_operator":r"(([\w]+)?[\s]?(\++|\--|\+=[\d]+|\-=[\d]+|\/=[\d]+|\*=[\d]+)\))?" #incrementing operator [ex x++]
+			        "final_condition":r"((int)?[\w]+(\==|\<|\>|!=|\>=|\<=)[\d]+\;)|(\;[\s]*)", #final condition to stop for
+			        "increment_operator":r"(([\w]+)?[\s]?(\++|\--|\+=[\d]+|\-=[\d]+|\/=[\d]+|\*=[\d]+)\))?" #incrementing operator [ex x++]
                                    },
-    	"final_pattern" : r"\)[\s]?\{.+\}" # something){codecodecode} -- detector
+    "final_pattern" : r"\)[\s]?\{.+\}" # something){codecodecode} -- detector
 }
 
 

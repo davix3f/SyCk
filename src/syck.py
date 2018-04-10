@@ -81,7 +81,7 @@ class Elements:
                                             Elements.constructs[item][d].dect_at))
 
         Elements.loop_l = sorted(Elements.loop_l, key=operator.itemgetter(1))
-        if explicit_list == T rue:
+        if explicit_list == True:
             print(Elements.loop_l)
 
     def function_list(explicit_list=False):
